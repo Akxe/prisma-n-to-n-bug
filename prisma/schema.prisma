@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Carrier {
+  carrierID      Int              @id @default(autoincrement()) @db.UnsignedInt
+  columns        String           @db.VarChar(60)
+  CarrierInOffer CarrierInOffer[]
+}
+
+model CarrierInOffer {
+  offerID                Int                      @db.UnsignedInt
+  carrierID              Int                      @db.UnsignedInt
+  Carrier                Carrier                  @relation(fields: [carrierID], references: [carrierID], onDelete: Cascade, map: "carrierInOffer_Carrier")
+  Offer                  Offer                    @relation(fields: [offerID], references: [offerID], onDelete: Cascade, map: "carrierInOffer_Offer")
+  DocumentationOfCarrier DocumentationOfCarrier[]
+
+  @@id([carrierID, offerID])
+  @@index([carrierID], map: "CarrierInOffer_Carrier")
+  @@index([offerID], map: "CarrierInOffer_Offer")
+}
+
+model DocumentationOfCarrier {
+  date           DateTime       @db.Date
+  carrierID      Int            @db.UnsignedInt
+  CarrierInOffer CarrierInOffer @relation(fields: [carrierID], references: [carrierID], onDelete: Cascade, map: "documentationOfCarrier_offer")
+
+  @@id([date, carrierID])
+  @@index([carrierID], map: "DocCarrierID")
+}
+
+model Offer {
+  offerID        Int              @id @default(autoincrement()) @db.UnsignedInt
+  CarrierInOffer CarrierInOffer[]
+}
