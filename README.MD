@@ -1,1 +1,1 @@
-## This is a repe showing n-to-n bug
+## This is a repo showing a many to many bug with MySQL
